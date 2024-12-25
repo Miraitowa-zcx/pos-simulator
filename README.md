@@ -35,7 +35,7 @@ POS 机模拟程序采用模块化设计，主要模块包括：
 1. **克隆仓库**
 
 ``` bash
-  git clone https://github.com/miraitowa-zcx/pos-simulator.git
+  git clone git@github.com:Miraitowa-zcx/pos-simulator.git
   
   cd pos-simulator
 ```
