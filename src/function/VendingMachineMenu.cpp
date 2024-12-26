@@ -51,9 +51,10 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
                 for (const int id : ids) {
                     product = inventory.selectProduct(id);
                     if (product) {
-                        std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "名称" << std::setw(10)
-                                  << "价格" << std::setw(10) << "类型" << std::setw(5) << "数量"
-                                  << "\n";
+                        std::cout << std::left << std::setw(5) << product->getId() << std::setw(20)
+                                  << product->getName() << std::setw(10) << product->getPrice() << std::setw(10)
+                                  << product->getType() << std::setw(5)
+                                  << inventory.getProductQuantity(product->getId()) << "\n";
                     }
                 }
 
