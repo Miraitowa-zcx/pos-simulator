@@ -5,18 +5,18 @@
 #include "../include/class/SaleTransaction.hpp"
 
 namespace pos_system {
-    // Ìí¼ÓÏúÊÛ
+    // æ·»åŠ é”€å”®
     int SaleTransaction::saleProduct(const std::optional<Product>& product, int quantity) {
-        // ÅĞ¶ÏÉÌÆ·ÊÇ·ñ´æÔÚ
+        // åˆ¤æ–­å•†å“æ˜¯å¦å­˜åœ¨
         if (!product.has_value()) {
             return false;
         }
-        // Èç¹ûitems ÖĞ´æÔÚÒ»¸öProduct ºÍÊıÁ¿£¬Ôò¸üĞÂÊıÁ¿£¬·ñÔòÌí¼ÓÒ»¸öĞÂÌõÄ¿
+        // å¦‚æœitems ä¸­å­˜åœ¨ä¸€ä¸ªProduct å’Œæ•°é‡ï¼Œåˆ™æ›´æ–°æ•°é‡ï¼Œå¦åˆ™æ·»åŠ ä¸€ä¸ªæ–°æ¡ç›®
         if (std::ranges::find_if(items,
                 [&product](
                     const std::pair<Product, int>& item) { return item.first.getId() == product.value().getId(); })
             != items.end()) {
-            // ¸üĞÂÊıÁ¿
+            // æ›´æ–°æ•°é‡
             for (auto& [fst, snd] : items) {
                 if (fst.getId() == product.value().getId()) {
                     snd += quantity;
@@ -25,85 +25,87 @@ namespace pos_system {
                 }
             }
         } else {
-            // Ìí¼ÓĞÂÌõÄ¿
+            // æ·»åŠ æ–°æ¡ç›®
             items.emplace_back(product.value(), quantity);
             total += product.value().getPrice() * quantity;
         }
         return true;
     }
 
-    // È¡ÏûÏúÊÛ
+    // å–æ¶ˆé”€å”®
     int SaleTransaction::cancelSale(const std::optional<Product>& product, const int quantity) {
         if (!product.has_value()) {
             return -1;
         }
 
-        // ÅĞ¶ÏÉÌÆ·ÊÇ·ñ´æÔÚ
+        // åˆ¤æ–­å•†å“æ˜¯å¦å­˜åœ¨
         const auto it = std::ranges::find_if(items,
             [&product](const std::pair<Product, int>& item) { return item.first.getId() == product.value().getId(); });
 
         if (it != items.end()) {
-            // ÅĞ¶ÏÊıÁ¿ÊÇ·ñ×ã¹»
+            // åˆ¤æ–­æ•°é‡æ˜¯å¦è¶³å¤Ÿ
             if (const int realQuantity = it->second; quantity <= realQuantity) {
                 total -= quantity * product.value().getPrice();
                 items.erase(it);
-                items.emplace_back(product.value(), realQuantity - quantity);
+                if(realQuantity - realQuantity != 0) {
+items.emplace_back(product.value(), realQuantity - quantity);
+																						} 
 
-                return realQuantity - quantity;
+                return realQuantity - realQuantity;
             }
             return -1;
         }
         return -1;
     }
 
-    // Ìá½»ÏúÊÛ
+    // æäº¤é”€å”®
     int SaleTransaction::finalizeSale(Inventory& inventory, const int pricePayable) {
-        // ÅĞ¶ÏÖ§¸¶½ğ¶îÊÇ·ñ×ã¹»
+        // åˆ¤æ–­æ”¯ä»˜é‡‘é¢æ˜¯å¦è¶³å¤Ÿ
         if (pricePayable < total) {
-            std::cout << "Ö§¸¶½ğ¶î²»×ã£¡ĞèÒª " << total << "Ôª£¬µ«Ö»Ö§¸¶ÁË " << pricePayable << "Ôª\n";
+            std::cout << "æ”¯ä»˜é‡‘é¢ä¸è¶³ï¼éœ€è¦ " << total << "å…ƒï¼Œä½†åªæ”¯ä»˜äº† " << pricePayable << "å…ƒ\n";
             return false;
         }
-        // ¼õÉÙ¿â´æ
+        // å‡å°‘åº“å­˜
         for (auto& [product, quantitySold] : items) {
-            // ÅĞ¶Ï¿â´æÊÇ·ñ×ã¹»
+            // åˆ¤æ–­åº“å­˜æ˜¯å¦è¶³å¤Ÿ
             if (const int currentQuantity = inventory.getProductQuantity(product.getId());
                 currentQuantity >= quantitySold) {
-                // ¸üĞÂ¿â´æ
+                // æ›´æ–°åº“å­˜
                 if (const int newQuantity = currentQuantity - quantitySold;
                     inventory.updateProduct(product.getId(), product, newQuantity)) {
-                    std::cout << "³öÊÛ " << quantitySold << "¸ö " << product.getName() << " ³É¹¦£¡\n";
+                    std::cout << "å‡ºå”® " << quantitySold << "ä¸ª " << product.getName() << " æˆåŠŸï¼\n";
                 } else {
-                    std::cout << "³öÊÛ " << quantitySold << "¸ö " << product.getName() << " Ê§°Ü£¡\n";
+                    std::cout << "å‡ºå”® " << quantitySold << "ä¸ª " << product.getName() << " å¤±è´¥ï¼\n";
                     return false;
                 }
             } else {
-                std::cout << "³öÊÛ " << quantitySold << "¸ö " << product.getName() << " ¿â´æ²»×ã£¡\n";
+                std::cout << "å‡ºå”® " << quantitySold << "ä¸ª " << product.getName() << " åº“å­˜ä¸è¶³ï¼\n";
                 return false;
             }
         }
 
-        // ´òÓ¡ÏúÊÛ
+        // æ‰“å°é”€å”®
         const double change = pricePayable - total;
-        std::cout << "×Ü¼Û£º" << total << "Ôª\n";
-        std::cout << "Ö§¸¶½ğ¶î£º" << pricePayable << "Ôª\n";
-        std::cout << "ÕÒÁã£º" << change << "Ôª\n";
+        std::cout << "æ€»ä»·ï¼š" << total << "å…ƒ\n";
+        std::cout << "æ”¯ä»˜é‡‘é¢ï¼š" << pricePayable << "å…ƒ\n";
+        std::cout << "æ‰¾é›¶ï¼š" << change << "å…ƒ\n";
 
         return true;
     }
 
-    // ´òÓ¡ÏúÊÛ
+    // æ‰“å°é”€å”®
     int SaleTransaction::printReceipt() {
-        std::cout << "ÊÕ¾İ£º\n";
+        std::cout << "æ”¶æ®ï¼š\n";
         for (const auto& [fst, snd] : items) {
-            std::cout << fst.getName() << " x" << snd << "£º " << std::fixed << std::setprecision(2)
-                      << fst.getPrice() * snd << "Ôª\n";
+            std::cout << fst.getName() << " x" << snd << "ï¼š " << std::fixed << std::setprecision(2)
+                      << fst.getPrice() * snd << "å…ƒ\n";
         }
-        std::cout << "×Ü¼Û£º" << total << "Ôª\n";
+        std::cout << "æ€»ä»·ï¼š" << total << "å…ƒ\n";
 
         return true;
     }
 
-    // Çå¿ÕÏúÊÛ
+    // æ¸…ç©ºé”€å”®
     int SaleTransaction::clearSale() {
         items.clear();
         total = 0.0;
