@@ -10,7 +10,8 @@
 namespace pos_system {
     class SaleTransaction {
     public:
-        int saleProduct(const Product& product, int quantity);
+        int saleProduct(const std::optional<Product>& product, int quantity);
+        int cancelSale(const std::optional<Product>& product, int quantity);
         int finalizeSale(Inventory& inventory, int pricePayable);
         int printReceipt();
         int clearSale();

@@ -196,6 +196,11 @@ namespace pos_system {
 
     // 查询商品
     std::optional<Product> Inventory::selectProduct(const int productId) const {
+        // 如果 ID 为 -1，则返回空
+        if (productId == -1) {
+            return std::nullopt;
+        }
+
         // 查找商品
         if (const auto it = products.find(productId); it != products.end()) {
             return it->second.first;
@@ -239,10 +244,32 @@ namespace pos_system {
             if (snd.first.getName().empty()) {
                 continue; // 跳过名称为 空 的商品
             }
-            std::cout << std::left << std::setw(5) << fst << std::setw(20) << snd.first.getName() << std::setw(10) << std::fixed << std::setprecision(2) << snd.first.getPrice()
-                      << std::setw(10) << snd.first.getType()
-                      << std::setw(5) << snd.second
-                      << "\n";
+            std::cout << std::left << std::setw(5) << fst << std::setw(20) << snd.first.getName() << std::setw(10)
+                      << std::fixed << std::setprecision(2) << snd.first.getPrice() << std::setw(10)
+                      << snd.first.getType() << std::setw(5) << snd.second << "\n";
+        }
+        return true;
+    }
+
+    int Inventory::printInventoryByIds(const std::vector<int>& ids) const {
+        // 检查类别是否存在
+        if (ids.empty()) {
+            std::cout << "类别不存在！\n" << std::endl;
+
+            return false;
+        }
+
+        std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "名称" << std::setw(10) << "价格"
+                  << std::setw(10) << "类型" << std::setw(5) << "数量"
+                  << "\n";
+        // 遍历 ID 列表
+        for (const auto& id : ids) {
+            // 查找商品
+            if (const auto it = products.find(id); it != products.end()) {
+                std::cout << std::left << std::setw(5) << it->first << std::setw(20) << it->second.first.getName()
+                          << std::setw(10) << std::fixed << std::setprecision(2) << it->second.first.getPrice()
+                          << std::setw(10)<< it->second.first.getType() << std::setw(5) << it->second.second << "\n";
+            }
         }
         return true;
     }

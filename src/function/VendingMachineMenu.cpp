@@ -12,8 +12,9 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
     do {
         std::cout << "**********************  售货机菜单  **********************\n";
         std::cout << "1. 商品选择；\n";
-        std::cout << "2. 收款与找零；\n";
-        std::cout << "3. 打印收据；\n";
+        std::cout << "2. 取消选择\n";
+        std::cout << "3. 收款与找零；\n";
+        std::cout << "4. 打印收据；\n";
         std::cout << "0. 退出；\n";
         std::cout << "***********************  end  ***********************\n";
         std::cout << "请输入您的选项：";
@@ -30,6 +31,12 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
         switch (menu) {
         case 1:
             {
+                // 清除选择状态
+                if (!choiceStatus) {
+                    choiceStatus = receiptStatus = 0;
+                    saleTransaction.clearSale();
+                }
+
                 std::string name;
                 int quantity;
                 std::string type;
@@ -38,40 +45,20 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
                 std::cout << "请输入要选择的类别：";
                 std::cin >> type;
 
-                const std::vector<int> ids = inventory.getProductType(type);
-                if (ids.empty()) {
-                    std::cout << "类别不存在！\n" << std::endl;
+                // 输出商品
+                if (!inventory.printInventoryByIds(inventory.getProductType(type))) {
+                    std::cout << "商品列表异常！\n" << std::endl;
 
                     break;
-                }
-
-                std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "名称" << std::setw(10) << "价格"
-                          << std::setw(10) << "类型" << std::setw(5) << "数量"
-                          << "\n";
-                for (const int id : ids) {
-                    product = inventory.selectProduct(id);
-                    if (product) {
-                        std::cout << std::left << std::setw(5) << product->getId() << std::setw(20)
-                                  << product->getName() << std::setw(10) << product->getPrice() << std::setw(10)
-                                  << product->getType() << std::setw(5)
-                                  << inventory.getProductQuantity(product->getId()) << "\n";
-                    }
                 }
 
                 std::cout << "请输入要选择的商品及数量：";
                 std::cin >> name >> quantity;
 
                 // 判断商品是否存在
-                product = inventory.selectProduct(inventory.getProductId(name));
-                if (!product) {
-                    std::cout << "商品不存在！\n" << std::endl;
-
-                    break;
-                }
-
-                if (saleTransaction.saleProduct(product.value(), quantity)) {
+                if (saleTransaction.saleProduct(inventory.selectProduct(inventory.getProductId(name)), quantity)) {
                     std::cout << "选择成功！\n";
-                    choiceStatus++;
+                    choiceStatus = 1;
                 } else {
                     std::cout << "选择失败！\n";
                 }
@@ -80,6 +67,34 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
             }
 
         case 2:
+            {
+                std::string name;
+                int quantity;
+
+                if (!choiceStatus) {
+                    std::cout << "请先选择商品！\n" << std::endl;
+
+                    break;
+                }
+
+                std::cout << "请输入要取消选择的商品及数量：";
+                std::cin >> name >> quantity;
+
+                const int cancelStatus =
+                    saleTransaction.cancelSale(inventory.selectProduct(inventory.getProductId(name)), quantity);
+                if (cancelStatus > 0) {
+                    std::cout << "已取消选择！\n" << std::endl;
+                } else if (cancelStatus == 0) {
+                    std::cout << "已取消选择！\n" << std::endl;
+                    choiceStatus--;
+                } else {
+                    std::cout << "取消选择失败！\n" << std::endl;
+                }
+
+                break;
+            }
+
+        case 3:
             {
                 int pricePayable;
 
@@ -96,6 +111,7 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
                     if (inventory.saveProduct(-1)) {
                         std::cout << "收款成功！\n" << std::endl;
                         receiptStatus++;
+                        choiceStatus--;
                     } else {
                         std::cout << "收款失败！\n" << std::endl;
                     }
@@ -106,24 +122,21 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
                 break;
             }
 
-        case 3:
+        case 4:
             {
                 if (!receiptStatus) {
                     std::cout << "请先支付！\n" << std::endl;
                 } else if (!saleTransaction.printReceipt()) {
                     std::cout << "打印失败 " << std::endl;
+                } else {
+                    receiptStatus--;
                 }
 
                 break;
             }
 
         case 0:
-            {
-                choiceStatus = receiptStatus = 0;
-                saleTransaction.clearSale();
-
-                break;
-            }
+            break;
 
         default:
             std::cout << "输入错误，请重新选择：\n";

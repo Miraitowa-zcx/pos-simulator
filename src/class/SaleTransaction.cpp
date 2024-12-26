@@ -6,25 +6,54 @@
 
 namespace pos_system {
     // 添加销售
-    int SaleTransaction::saleProduct(const Product& product, int quantity) {
+    int SaleTransaction::saleProduct(const std::optional<Product>& product, int quantity) {
+        // 判断商品是否存在
+        if (!product.has_value()) {
+            return false;
+        }
         // 如果items 中存在一个Product 和数量，则更新数量，否则添加一个新条目
         if (std::ranges::find_if(items,
-                [&product](const std::pair<Product, int>& item) { return item.first.getId() == product.getId(); })
+                [&product](
+                    const std::pair<Product, int>& item) { return item.first.getId() == product.value().getId(); })
             != items.end()) {
             // 更新数量
             for (auto& [fst, snd] : items) {
-                if (fst.getId() == product.getId()) {
+                if (fst.getId() == product.value().getId()) {
                     snd += quantity;
-                    total += product.getPrice() * quantity;
+                    total += product.value().getPrice() * quantity;
                     break;
                 }
             }
         } else {
             // 添加新条目
-            items.emplace_back(product, quantity);
-            total += product.getPrice() * quantity;
+            items.emplace_back(product.value(), quantity);
+            total += product.value().getPrice() * quantity;
         }
         return true;
+    }
+
+    // 取消销售
+    int SaleTransaction::cancelSale(const std::optional<Product>& product, const int quantity) {
+        if (!product.has_value()) {
+            return -1;
+        }
+
+        // 判断商品是否存在
+        const auto it = std::ranges::find_if(items,
+            [&product](const std::pair<Product, int>& item) { return item.first.getId() == product.value().getId(); });
+
+        if (it != items.end()) {
+            // 判断数量是否足够
+            if (const int realQuantity = it->second; quantity <= realQuantity) {
+                total -= quantity * product.value().getPrice();
+                items.erase(it);
+                items.emplace_back(product.value(), realQuantity - quantity);
+
+                return realQuantity - quantity;
+            }
+            return -1;
+        }
+        return -1;
     }
 
     // 提交销售

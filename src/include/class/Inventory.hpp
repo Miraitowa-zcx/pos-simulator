@@ -28,6 +28,7 @@ namespace pos_system {
         std::vector<int> getProductType(const std::string& productType);
         int getProductQuantity(int productId) const;
         int printInventory() const;
+        int printInventoryByIds(const std::vector<int>& ids) const;
 
     private:
         std::unordered_map<int, std::pair<Product, int>> products;
