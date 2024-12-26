@@ -6,28 +6,34 @@
 
 namespace pos_system {
 
-    // æ— å‚æ„é€ å‡½æ•°
+    // ÎŞ²Î¹¹Ôìº¯Êı
     Product::Product() : id(0), price(0.0) {}
 
-    // æœ‰å‚æ„é€ å‡½æ•°
-    Product::Product(std::string name, const double price) : id(0), name(std::move(name)), price(price) {}
+    // ÓĞ²Î¹¹Ôìº¯Êı
+    Product::Product(std::string name, const double price, std::string type)
+        : id(0), name(std::move(name)), price(price), type(std::move(type)) {}
 
-    // æœ‰å‚æ„é€ å‡½æ•°
-    Product::Product(const int id, std::string name, const double price)
-        : id(id), name(std::move(name)), price(price) {}
+    // ÓĞ²Î¹¹Ôìº¯Êı
+    Product::Product(const int id, std::string name, const double price, std::string type)
+        : id(id), name(std::move(name)), price(price), type(std::move(type)) {}
 
-    // è·å–äº§å“ID
+    // »ñÈ¡²úÆ·ID
     int Product::getId() const {
         return id;
     }
 
-    // è·å–äº§å“åç§°
+    // »ñÈ¡²úÆ·Ãû³Æ
     std::string Product::getName() const {
         return name;
     }
 
-    // è·å–äº§å“ä»·æ ¼
+    // »ñÈ¡²úÆ·¼Û¸ñ
     double Product::getPrice() const {
         return price;
     }
+
+    // »ñÈ¡²úÆ·ÀàĞÍ
+    std::string Product::getType() const {
+        return type;
+}
 } // namespace pos_system

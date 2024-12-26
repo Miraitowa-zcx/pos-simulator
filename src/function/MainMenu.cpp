@@ -6,22 +6,30 @@
 
 void MainMenu(int& menu) {
 
-    // åˆ›å»ºå¯¹è±¡
+    // ´´½¨¶ÔÏó
     pos_system::Inventory inventory;
     pos_system::SaleTransaction transaction;
 
     do {
-        std::cout << "**********************  ä¸»èœå•  **********************\n";
-        std::cout << "1. ç®¡ç†å‘˜ç•Œé¢ï¼›\n";
-        std::cout << "2. å•†å“é¡µé¢ï¼›\n";
-        std::cout << "3. æ˜¾ç¤ºåº“å­˜ï¼›\n";
-        std::cout << "0. é€€å‡ºï¼›\n";
+        std::cout << "**********************  Ö÷²Ëµ¥  **********************\n";
+        std::cout << "1. ¹ÜÀíÔ±½çÃæ£»\n";
+        std::cout << "2. ÉÌÆ·Ò³Ãæ£»\n";
+        std::cout << "3. ÏÔÊ¾¿â´æ£»\n";
+        std::cout << "0. ÍË³ö£»\n";
         std::cout << "***********************  end  ***********************\n";
-        std::cout << "è¯·è¾“å…¥æ‚¨çš„é€‰é¡¹ï¼š";
+        std::cout << "ÇëÊäÈëÄúµÄÑ¡Ïî£º";
         std::cin >> menu;
 
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "ÊäÈëÎÞÐ§£¬ÇëÊäÈëÒ»¸öÊý×Ö¡£\n";
+
+            menu = 999;
+        }
+
         if (!inventory.loadProduct()) {
-            std::cout << "åŠ è½½åº“å­˜å¤±è´¥ï¼\n";
+            std::cout << "¼ÓÔØ¿â´æÊ§°Ü£¡\n";
             return;
         }
 
@@ -30,7 +38,7 @@ void MainMenu(int& menu) {
             {
                 system("cls");
 
-                // ç®¡ç†å‘˜ç•Œé¢
+                // ¹ÜÀíÔ±½çÃæ
                 ManagerMenu(menu, inventory);
 
                 break;
@@ -40,7 +48,7 @@ void MainMenu(int& menu) {
             {
                 system("cls");
 
-                // å•†å“é¡µé¢
+                // ÉÌÆ·Ò³Ãæ
                 VendingMachineMenu(menu, inventory, transaction);
 
                 break;
@@ -48,9 +56,9 @@ void MainMenu(int& menu) {
 
         case 3:
             {
-                // æ˜¾ç¤ºåº“å­˜
+                // ÏÔÊ¾¿â´æ
                 if (!inventory.printInventory()) {
-                    std::cout << "æ‰“å°å¤±è´¥ï¼\n";
+                    std::cout << "´òÓ¡Ê§°Ü£¡\n";
                 }
 
                 break;
@@ -60,7 +68,7 @@ void MainMenu(int& menu) {
             break;
 
         default:
-            std::cout << "è¾“å…¥é”™è¯¯ï¼Œè¯·é‡æ–°é€‰æ‹©ï¼š\n";
+            std::cout << "ÊäÈë´íÎó£¬ÇëÖØÐÂÑ¡Ôñ£º\n";
         }
     } while (menu != 0);
 }

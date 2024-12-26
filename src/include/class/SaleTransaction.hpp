@@ -5,13 +5,7 @@
 #ifndef SALE_TRANSACTION_HPP
 #define SALE_TRANSACTION_HPP
 
-#include <algorithm>
-#include <iomanip>
-#include <iostream>
-#include <vector>
-
 #include "Inventory.hpp"
-#include "Product.hpp"
 
 namespace pos_system {
     class SaleTransaction {

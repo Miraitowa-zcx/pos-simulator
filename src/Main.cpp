@@ -5,7 +5,6 @@
 #include "include/function/Menu.hpp"
 
 int main() {
-
     int menu = 999;
     MainMenu(menu);
 

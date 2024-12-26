@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/src/function/MainMenu.cpp" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/function/VendingMachineMenu.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cmake-build-release/data/product.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/Main.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/class/Inventory.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/class/Product.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/class/SaleTransaction.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/function/MainMenu.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/function/ManagerMenu.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/function/VendingMachineMenu.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/include/class/Inventory.hpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/include/class/Product.hpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/include/class/SaleTransaction.hpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/include/function/Menu.hpp" charset="GBK" />
   </component>
 </project>

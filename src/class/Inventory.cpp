@@ -5,9 +5,9 @@
 #include "../include/class/Inventory.hpp"
 
 namespace pos_system {
-    // æ„é€ å‡½æ•°
+    // ¹¹Ôìº¯Êı
     Inventory::Inventory() : currentId(0) {
-        // åˆå§‹åŒ– å½“å‰ ID
+        // ³õÊ¼»¯ µ±Ç° ID
         if (std::ifstream file("data/product.csv"); file.is_open()) {
             std::string line;
             while (std::getline(file, line)) {
@@ -25,12 +25,12 @@ namespace pos_system {
         }
     }
 
-    // ä¿å­˜å•†å“
+    // ±£´æÉÌÆ·
     bool Inventory::saveProduct(int id) {
         std::filesystem::create_directory("data");
         const std::string filename = "data/product.csv";
 
-        // è¯»å–æ–‡ä»¶å†…å®¹åˆ°ä¸´æ—¶å®¹å™¨
+        // ¶ÁÈ¡ÎÄ¼şÄÚÈİµ½ÁÙÊ±ÈİÆ÷
         std::vector<std::string> lines;
         if (std::ifstream infile(filename); infile.is_open()) {
             std::string line;
@@ -39,16 +39,16 @@ namespace pos_system {
             }
             infile.close();
         }
-        // å¦‚æœ id ä¸º -1ï¼Œåˆ™ä¿å­˜æ‰€æœ‰äº§å“
+        // Èç¹û id Îª -1£¬Ôò±£´æËùÓĞ²úÆ·
         if (id == -1) {
-            lines.clear(); // æ¸…ç©ºç°æœ‰å†…å®¹
+            lines.clear(); // Çå¿ÕÏÖÓĞÄÚÈİ
             for (const auto& [product_id, product_data] : products) {
                 const auto& [fst, snd] = product_data;
                 lines.push_back(std::to_string(product_id) + "," + fst.getName() + "," + std::to_string(fst.getPrice())
-                                + "," + std::to_string(snd));
+                                + "," + fst.getType() + "," + std::to_string(snd));
             }
         } else {
-            // æ‰¾åˆ°å¹¶æ›´æ–°æŒ‡å®šè¡Œ
+            // ÕÒµ½²¢¸üĞÂÖ¸¶¨ĞĞ
             bool found = false;
             for (auto& line : lines) {
                 std::istringstream iss(line);
@@ -58,37 +58,37 @@ namespace pos_system {
                             found                  = true;
                             const auto& [fst, snd] = products[id];
                             line = std::to_string(id) + "," + fst.getName() + "," + std::to_string(fst.getPrice()) + ","
-                                 + std::to_string(snd);
+                                 + fst.getType() + "," + std::to_string(snd);
                             break;
                         }
                     } catch ([[maybe_unused]] const std::invalid_argument& e) {
-                        std::cout << "æ— æ•ˆçš„æ•´æ•°è½¬æ¢: " << token << std::endl;
+                        std::cout << "ÎŞĞ§µÄÕûÊı×ª»»: " << token << std::endl;
                     } catch ([[maybe_unused]] const std::out_of_range& e) {
-                        std::cout << "æ•´æ•°è¶…å‡ºèŒƒå›´: " << token << std::endl;
+                        std::cout << "ÕûÊı³¬³ö·¶Î§: " << token << std::endl;
                     }
                 }
             }
 
-            // å¦‚æœæ²¡æœ‰æ‰¾åˆ°æŒ‡å®šçš„ idï¼Œåˆ™æ·»åŠ æ–°è¡Œ
+            // Èç¹ûÃ»ÓĞÕÒµ½Ö¸¶¨µÄ id£¬ÔòÌí¼ÓĞÂĞĞ
             if (!found) {
                 const auto& [fst, snd] = products[id];
                 lines.push_back(std::to_string(id) + "," + fst.getName() + "," + std::to_string(fst.getPrice()) + ","
-                                + std::to_string(snd));
+                                + fst.getType() + "," + std::to_string(snd));
             }
         }
 
-        // å†™å›æ–‡ä»¶
-        std::ofstream file(filename, std::ios::trunc); // ä½¿ç”¨ trunc æ¨¡å¼æ¸…ç©ºæ–‡ä»¶
+        // Ğ´»ØÎÄ¼ş
+        std::ofstream file(filename, std::ios::trunc); // Ê¹ÓÃ trunc Ä£Ê½Çå¿ÕÎÄ¼ş
         if (!file.is_open()) {
-            std::cout << "æ— æ³•æ‰“å¼€æ–‡ä»¶è¿›è¡Œå†™å…¥ã€‚" << std::endl;
+            std::cout << "ÎŞ·¨´ò¿ªÎÄ¼ş½øĞĞĞ´Èë¡£" << std::endl;
             return false;
         }
 
-        // å†™å…¥æ–‡ä»¶
+        // Ğ´ÈëÎÄ¼ş
         for (const auto& line : lines) {
             file << line << "\n";
             if (!file) {
-                std::cout << "å†™å…¥æ–‡ä»¶æ—¶å‘ç”Ÿé”™è¯¯ã€‚" << std::endl;
+                std::cout << "Ğ´ÈëÎÄ¼şÊ±·¢Éú´íÎó¡£" << std::endl;
                 file.close();
                 return false;
             }
@@ -98,50 +98,52 @@ namespace pos_system {
         return true;
     }
 
-    // åŠ è½½å•†å“
+    // ¼ÓÔØÉÌÆ·
     bool Inventory::loadProduct() {
         std::filesystem::create_directory("data");
         std::ifstream file("data/product.csv");
-        // å¦‚æœæ–‡ä»¶ä¸å­˜åœ¨ï¼Œåˆ™åˆ›å»ºä¸€ä¸ªç©ºçš„æ–‡ä»¶
+        // Èç¹ûÎÄ¼ş²»´æÔÚ£¬Ôò´´½¨Ò»¸ö¿ÕµÄÎÄ¼ş
         if (!std::filesystem::exists("data/product.csv")) {
             std::ofstream outfile("data/product.csv");
             outfile.close();
             return true;
         }
         if (!file.is_open()) {
-            std::cout << "æ— æ³•æ‰“å¼€æ–‡ä»¶è¿›è¡Œè¯»å–ã€‚" << std::endl;
+            std::cout << "ÎŞ·¨´ò¿ªÎÄ¼ş½øĞĞ¶ÁÈ¡¡£" << std::endl;
             return false;
         }
 
-        // è¯»å–æ–‡ä»¶å†…å®¹
+        // ¶ÁÈ¡ÎÄ¼şÄÚÈİ
         std::string line;
         while (std::getline(file, line)) {
             std::stringstream ss(line);
             std::string token;
             std::vector<std::string> tokens;
 
-            // å»é™¤ç©ºæ ¼
+            // È¥³ı¿Õ¸ñ
             while (std::getline(ss, token, ',')) {
                 tokens.push_back(token);
             }
 
-            // å»é™¤å‰åç©ºæ ¼
+            // È¥³ıÇ°ºó¿Õ¸ñ
             for (auto& t : tokens) {
                 t.erase(0, t.find_first_not_of(" \t\n\r\f\v"));
                 t.erase(t.find_last_not_of(" \t\n\r\f\v") + 1);
             }
 
-            // æå–æ•°æ®
+            // ÌáÈ¡Êı¾İ
             int id           = std::stoi(tokens[0]);
             std::string name = tokens[1];
             double price     = std::stod(tokens[2]);
-            int quantity     = std::stoi(tokens[3]);
+            std::string type = tokens[3];
+            int quantity     = std::stoi(tokens[4]);
 
-            // æ·»åŠ åˆ°å®¹å™¨ä¸­
-            products[id]           = std::make_pair(Product(id, name, price), quantity);
+            // Ìí¼Óµ½ÈİÆ÷ÖĞ
+            products[id]           = std::make_pair(Product(id, name, price, type), quantity);
             nameToIdMap[tokens[1]] = id;
+            typeToIdMap[tokens[3]] = id;
 
-            // æ›´æ–°å½“å‰ ID
+            // ¸üĞÂµ±Ç° ID
             if (id >= currentId) {
                 currentId = id + 1;
             }
@@ -150,53 +152,58 @@ namespace pos_system {
         return true;
     }
 
-    // æ·»åŠ å•†å“
+    // Ìí¼ÓÉÌÆ·
     int Inventory::addProduct(const Product& product, int quantity) {
-        // æ£€æŸ¥æ˜¯å¦å·²å­˜åœ¨ç›¸åŒåç§°çš„äº§å“
+        // ¼ì²éÊÇ·ñÒÑ´æÔÚÏàÍ¬Ãû³ÆµÄ²úÆ·
         for (const auto& [fst, snd] : products | std::views::values) {
             if (fst.getName() == product.getName()) {
-                return -1; // å¦‚æœæ‰¾åˆ°ç›¸åŒåç§°çš„äº§å“ï¼Œè¿”å› -1
+                return -1; // Èç¹ûÕÒµ½ÏàÍ¬Ãû³ÆµÄ²úÆ·£¬·µ»Ø -1
             }
         }
 
         const int newId = currentId++;
-        // æ·»åŠ åˆ°å®¹å™¨ä¸­
-        products[newId] = std::make_pair(Product(newId, product.getName(), product.getPrice()), quantity);
+        // Ìí¼Óµ½ÈİÆ÷ÖĞ
+        products[newId] =
+            std::make_pair(Product(newId, product.getName(), product.getPrice(), product.getType()), quantity);
         nameToIdMap[product.getName()] = newId;
+        typeToIdMap[product.getType()] = newId;
         return newId;
     }
 
-    // æ›´æ–°å•†å“
+    // ¸üĞÂÉÌÆ·
     int Inventory::updateProduct(const int productId, const Product& product, const int quantity) {
         if (products.contains(productId)) {
-            // æ›´æ–°å®¹å™¨å’Œæ˜ å°„
-            products[productId] = std::make_pair(Product(productId, product.getName(), product.getPrice()), quantity);
+            // ¸üĞÂÈİÆ÷ºÍÓ³Éä
+            products[productId] =
+                std::make_pair(Product(productId, product.getName(), product.getPrice(), product.getType()), quantity);
             nameToIdMap[product.getName()] = productId;
+            typeToIdMap[product.getType()] = productId;
             return productId;
         }
         return false;
     }
 
-    // åˆ é™¤å•†å“
+    // É¾³ıÉÌÆ·
     int Inventory::deleteProduct(const int productId) {
         if (products.erase(productId)) {
-            // åˆ é™¤æ˜ å°„
+            // É¾³ıÓ³Éä
             nameToIdMap.erase(products[productId].first.getName());
+            typeToIdMap.erase(products[productId].first.getType());
             return productId;
         }
         return false;
     }
 
-    // æŸ¥è¯¢å•†å“
+    // ²éÑ¯ÉÌÆ·
     std::optional<Product> Inventory::selectProduct(const int productId) const {
-        // æŸ¥æ‰¾å•†å“
+        // ²éÕÒÉÌÆ·
         if (const auto it = products.find(productId); it != products.end()) {
             return it->second.first;
         }
         return std::nullopt;
     }
 
-    // è·å–å•†å“ ID
+    // »ñÈ¡ÉÌÆ· ID
     int Inventory::getProductId(const std::string& productName) const {
         if (const auto it = nameToIdMap.find(productName); it != nameToIdMap.end()) {
             return it->second;
@@ -204,7 +211,18 @@ namespace pos_system {
         return -1;
     }
 
-    // è·å–å•†å“æ•°é‡
+    // ¸ù¾İ ID »ñÈ¡ÉÌÆ·ÀàĞÍ
+    std::vector<int> Inventory::getProductType(const std::string& productType) {
+        std::vector<int> ids;
+        for (const auto& [fst, snd] : products) {
+            if (snd.first.getType() == productType) {
+                ids.push_back(fst);
+            }
+        }
+        return ids;
+    }
+
+    // »ñÈ¡ÉÌÆ·ÊıÁ¿
     int Inventory::getProductQuantity(const int productId) const {
         if (const auto it = products.find(productId); it != products.end()) {
             return it->second.second;
@@ -212,15 +230,19 @@ namespace pos_system {
         return 0;
     }
 
-    // æ‰“å°åº“å­˜
+    // ´òÓ¡¿â´æ
     int Inventory::printInventory() const {
-        std::cout << "ID\tåç§°\tä»·æ ¼\tæ•°é‡\n";
+        std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "Ãû³Æ" << std::setw(10) << "¼Û¸ñ"
+                  << std::setw(10) << "ÀàĞÍ" << std::setw(5) << "ÊıÁ¿"
+                  << "\n";
         for (const auto& [fst, snd] : products) {
             if (snd.first.getName().empty()) {
-                continue; // è·³è¿‡åç§°ä¸º "0" çš„äº§å“
+                continue; // Ìø¹ıÃû³ÆÎª ¿Õ µÄÉÌÆ·
             }
-            std::cout << fst << "\t" << snd.first.getName() << "\t" << std::fixed << std::setprecision(2)
-                      << snd.first.getPrice() << "\t" << snd.second << "\n";
+            std::cout << std::left << std::setw(5) << fst << std::setw(20) << snd.first.getName() << std::setw(10) << std::fixed << std::setprecision(2) << snd.first.getPrice()
+                      << std::setw(10) << snd.first.getType()
+                      << std::setw(5) << snd.second
+                      << "\n";
         }
         return true;
     }

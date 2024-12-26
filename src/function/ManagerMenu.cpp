@@ -6,60 +6,69 @@
 
 void ManagerMenu(int& menu, pos_system::Inventory& inventory) {
 
-    // ç®¡ç†å‘˜è´¦æˆ·åŠå¯†ç 
+    // ¹ÜÀíÔ±ÕË»§¼°ÃÜÂë
     const static std::string USERNAME = "admin";
     const static std::string PASSWORD = "123456";
 
-    // è¾“å…¥è´¦æˆ·ååŠå¯†ç 
+    // ÊäÈëÕË»§Ãû¼°ÃÜÂë
     std::string username;
     std::string password;
 
-    std::cout << "è¯·è¾“å…¥è´¦æˆ·åï¼š";
+    std::cout << "ÇëÊäÈëÕË»§Ãû£º";
     std::cin >> username;
-    std::cout << "è¯·è¾“å…¥å¯†ç ï¼š";
+    std::cout << "ÇëÊäÈëÃÜÂë£º";
     std::cin >> password;
 
-    // éªŒè¯è´¦æˆ·åå’Œå¯†ç 
+    // ÑéÖ¤ÕË»§ÃûºÍÃÜÂë
     if (username != USERNAME || password != PASSWORD) {
-        std::cout << "ç”¨æˆ·åæˆ–å¯†ç é”™è¯¯ï¼\n" << std::endl;
+        std::cout << "ÓÃ»§Ãû»òÃÜÂë´íÎó£¡\n" << std::endl;
         return;
     }
 
-    std::cout << "æ¬¢è¿ " << username << " ç™»å½•ï¼\n";
+    std::cout << "»¶Ó­ " << username << " µÇÂ¼£¡\n";
 
     do {
-        std::cout << "**********************  ç®¡ç†èœå•  **********************\n";
-        std::cout << "1. æ·»åŠ å•†å“ï¼›\n";
-        std::cout << "2. æ›´æ–°å•†å“ï¼›\n";
-        std::cout << "3. åˆ é™¤å•†å“ï¼›\n";
-        std::cout << "4. æŸ¥è¯¢å•†å“ï¼›\n";
-        std::cout << "0. é€€å‡ºï¼›\n";
+        std::cout << "**********************  ¹ÜÀí²Ëµ¥  **********************\n";
+        std::cout << "1. Ìí¼ÓÉÌÆ·£»\n";
+        std::cout << "2. ¸üĞÂÉÌÆ·£»\n";
+        std::cout << "3. É¾³ıÉÌÆ·£»\n";
+        std::cout << "4. ²éÑ¯ÉÌÆ·£»\n";
+        std::cout << "0. ÍË³ö£»\n";
         std::cout << "***********************  end  ***********************\n";
-        std::cout << "è¯·è¾“å…¥æ‚¨çš„é€‰é¡¹ï¼š";
+        std::cout << "ÇëÊäÈëÄúµÄÑ¡Ïî£º";
         std::cin >> menu;
+
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "ÊäÈëÎŞĞ§£¬ÇëÊäÈëÒ»¸öÊı×Ö¡£\n";
+
+            menu = 999;
+        }
 
         switch (menu) {
         case 1:
             {
-                // æ·»åŠ å•†å“
+                // Ìí¼ÓÉÌÆ·
 
                 std::string name;
                 double price;
+                std::string type;
                 int quantity;
 
-                std::cout << "è¯·è¾“å…¥å•†å“åç§°å’Œä»·æ ¼åŠæ•°é‡ï¼š";
-                std::cin >> name >> price >> quantity;
+                std::cout << "ÇëÊäÈëÉÌÆ·Ãû³Æ¡¢¼Û¸ñ¡¢Àà±ğ¼°ÊıÁ¿£º";
+                std::cin >> name >> price >> type >> quantity;
 
-                if (const int id = inventory.addProduct(pos_system::Product(name, price), quantity)) {
+                if (const int id = inventory.addProduct(pos_system::Product(name, price, type), quantity)) {
                     if (id == -1) {
-                        std::cout << "äº§å“åç§°å·²å­˜åœ¨: " << "  " << std::endl;
+                        std::cout << "²úÆ·Ãû³ÆÒÑ´æÔÚ: " << "  " << std::endl;
                     } else if (!inventory.saveProduct(id)) {
-                        std::cout << "æ·»åŠ å¤±è´¥ï¼\n";
+                        std::cout << "Ìí¼ÓÊ§°Ü£¡\n" << std::endl;
                     } else {
-                        std::cout << "æ·»åŠ æˆåŠŸï¼\n";
+                        std::cout << "Ìí¼Ó³É¹¦£¡\n" << std::endl;
                     }
                 } else {
-                    std::cout << "å•†å“å¼‚å¸¸ï¼\n";
+                    std::cout << "ÉÌÆ·Òì³££¡\n" << std::endl;
                 }
 
                 break;
@@ -67,26 +76,27 @@ void ManagerMenu(int& menu, pos_system::Inventory& inventory) {
 
         case 2:
             {
-                // æ›´æ–°å•†å“
+                // ¸üĞÂÉÌÆ·
 
                 std::string name;
                 double price;
+                std::string type;
                 int quantity;
 
-                std::cout << "è¯·è¾“å…¥è¦æ›´æ–°çš„å•†å“ï¼š";
+                std::cout << "ÇëÊäÈëÒª¸üĞÂµÄÉÌÆ·£º";
                 std::cin >> name;
-                std::cout << "è¯·è¾“å…¥å•†å“åç§°å’Œä»·æ ¼åŠæ•°é‡ï¼š";
-                std::cin >> name >> price >> quantity;
+                std::cout << "ÇëÊäÈëÉÌÆ·Ãû³Æ¡¢¼Û¸ñ¡¢Àà±ğ¼°ÊıÁ¿£º";
+                std::cin >> name >> price >> type >> quantity;
 
                 if (const int id = inventory.updateProduct(
-                        inventory.getProductId(name), pos_system::Product(name, price), quantity)) {
+                        inventory.getProductId(name), pos_system::Product(name, price, type), quantity)) {
                     if (!inventory.saveProduct(id)) {
-                        std::cout << "æ›´æ–°å¤±è´¥ï¼\n";
+                        std::cout << "¸üĞÂÊ§°Ü£¡\n";
                     } else {
-                        std::cout << "æ›´æ–°æˆåŠŸï¼\n";
+                        std::cout << "¸üĞÂ³É¹¦£¡\n";
                     }
                 } else {
-                    std::cout << "äº§å“åç§°ä¸å­˜åœ¨: " << "  " << std::endl;
+                    std::cout << "²úÆ·Ãû³Æ²»´æÔÚ: " << "  " << std::endl;
                 }
 
                 break;
@@ -94,21 +104,21 @@ void ManagerMenu(int& menu, pos_system::Inventory& inventory) {
 
         case 3:
             {
-                // åˆ é™¤å•†å“
+                // É¾³ıÉÌÆ·
 
                 std::string name;
 
-                std::cout << "è¯·è¾“å…¥è¦åˆ é™¤çš„å•†å“ï¼š";
+                std::cout << "ÇëÊäÈëÒªÉ¾³ıµÄÉÌÆ·£º";
                 std::cin >> name;
 
                 if (const int id = inventory.deleteProduct(inventory.getProductId(name))) {
                     if (!inventory.saveProduct(id)) {
-                        std::cout << "åˆ é™¤å¤±è´¥ï¼\n";
+                        std::cout << "É¾³ıÊ§°Ü£¡\n";
                     } else {
-                        std::cout << "åˆ é™¤æˆåŠŸï¼\n";
+                        std::cout << "É¾³ı³É¹¦£¡\n";
                     }
                 } else {
-                    std::cout << "äº§å“åç§°ä¸å­˜åœ¨: " << "  " << std::endl;
+                    std::cout << "²úÆ·Ãû³Æ²»´æÔÚ: " << "  " << std::endl;
                 }
 
                 break;
@@ -116,36 +126,37 @@ void ManagerMenu(int& menu, pos_system::Inventory& inventory) {
 
         case 4:
             {
-                // æŸ¥è¯¢å•†å“
+                // ²éÑ¯ÉÌÆ·
 
                 std::string name;
 
-                std::cout << "è¯·è¾“å…¥è¦æŸ¥è¯¢çš„å•†å“ï¼š";
+                std::cout << "ÇëÊäÈëÒª²éÑ¯µÄÉÌÆ·Ãû³Æ£º";
                 std::cin >> name;
 
                 if (const std::optional<pos_system::Product> product =
                         inventory.selectProduct(inventory.getProductId(name))) {
                     if (!inventory.saveProduct(product->getId())) {
-                        std::cout << "æŸ¥è¯¢å¤±è´¥ï¼\n";
+                        std::cout << "²éÑ¯Ê§°Ü£¡\n";
                     } else {
-                        std::cout << "å•†å“åç§°: " << product->getName() << "  " << std::endl;
-                        std::cout << "å•†å“ä»·æ ¼: " << product->getPrice() << "å…ƒ  " << std::endl;
-                        std::cout << "å•†å“æ•°é‡: " << inventory.getProductQuantity(product->getId()) << "  "
+                        std::cout << "ÉÌÆ·Ãû³Æ: " << product->getName() << "  " << std::endl;
+                        std::cout << "ÉÌÆ·¼Û¸ñ: " << product->getPrice() << "Ôª  " << std::endl;
+                        std::cout << "ÉÌÆ·Àà±ğ: " << product->getType() << "  " << std::endl;
+                        std::cout << "ÉÌÆ·ÊıÁ¿: " << inventory.getProductQuantity(product->getId()) << "  "
                                   << std::endl;
-                        std::cout << "æŸ¥è¯¢æˆåŠŸï¼\n";
+                        std::cout << "²éÑ¯³É¹¦£¡\n";
                     }
                 } else {
-                    std::cout << "äº§å“åç§°ä¸å­˜åœ¨: " << "  " << std::endl;
+                    std::cout << "²úÆ·Ãû³Æ²»´æÔÚ: " << "  " << std::endl;
                 }
 
                 break;
             }
 
         case 0:
-            break;
+                break;
 
         default:
-            std::cout << "è¾“å…¥é”™è¯¯ï¼Œè¯·é‡æ–°é€‰æ‹©ï¼š\n";
+            std::cout << "ÊäÈë´íÎó£¬ÇëÖØĞÂÑ¡Ôñ£º\n";
         }
     } while (menu++ != 0);
 }

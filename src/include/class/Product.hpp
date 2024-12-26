@@ -11,16 +11,18 @@ namespace pos_system {
     class Product {
     public:
         Product();
-        Product(std::string name, double price);
-        Product(int id, std::string name, double price);
+        Product(std::string name, double price, std::string type);
+        Product(int id, std::string name, double price, std::string type);
         [[nodiscard]] int getId() const;
         [[nodiscard]] std::string getName() const;
         [[nodiscard]] double getPrice() const;
+        [[nodiscard]] std::string getType() const;
 
     private:
         int id;
         std::string name;
         double price;
+        std::string type;
     };
 } // namespace pos_system
 

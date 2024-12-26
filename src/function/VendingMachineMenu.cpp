@@ -6,41 +6,73 @@
 
 void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system::SaleTransaction& saleTransaction) {
 
-    // çŠ¶æ€å˜é‡
+    // ×´Ì¬±äÁ¿
     int choiceStatus = 0, receiptStatus = 0;
 
     do {
-        std::cout << "**********************  å”®è´§æœºèœå•  **********************\n";
-        std::cout << "1. å•†å“é€‰æ‹©ï¼›\n";
-        std::cout << "2. æ”¶æ¬¾ä¸æ‰¾é›¶ï¼›\n";
-        std::cout << "3. æ‰“å°æ”¶æ®ï¼›\n";
-        std::cout << "0. é€€å‡ºï¼›\n";
+        std::cout << "**********************  ÊÛ»õ»ú²Ëµ¥  **********************\n";
+        std::cout << "1. ÉÌÆ·Ñ¡Ôñ£»\n";
+        std::cout << "2. ÊÕ¿îÓëÕÒÁã£»\n";
+        std::cout << "3. ´òÓ¡ÊÕ¾İ£»\n";
+        std::cout << "0. ÍË³ö£»\n";
         std::cout << "***********************  end  ***********************\n";
-        std::cout << "è¯·è¾“å…¥æ‚¨çš„é€‰é¡¹ï¼š";
+        std::cout << "ÇëÊäÈëÄúµÄÑ¡Ïî£º";
         std::cin >> menu;
+
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "ÊäÈëÎŞĞ§£¬ÇëÊäÈëÒ»¸öÊı×Ö¡£\n";
+
+            menu = 999;
+        }
 
         switch (menu) {
         case 1:
             {
                 std::string name;
                 int quantity;
+                std::string type;
+                std::optional<pos_system::Product> product;
 
-                std::cout << "è¯·è¾“å…¥è¦é€‰æ‹©çš„å•†å“åŠæ•°é‡ï¼š";
+                std::cout << "ÇëÊäÈëÒªÑ¡ÔñµÄÀà±ğ£º";
+                std::cin >> type;
+
+                const std::vector<int> ids = inventory.getProductType(type);
+                if (ids.empty()) {
+                    std::cout << "Àà±ğ²»´æÔÚ£¡\n" << std::endl;
+
+                    break;
+                }
+
+                std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "Ãû³Æ" << std::setw(10) << "¼Û¸ñ"
+                          << std::setw(10) << "ÀàĞÍ" << std::setw(5) << "ÊıÁ¿"
+                          << "\n";
+                for (const int id : ids) {
+                    product = inventory.selectProduct(id);
+                    if (product) {
+                        std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "Ãû³Æ" << std::setw(10)
+                                  << "¼Û¸ñ" << std::setw(10) << "ÀàĞÍ" << std::setw(5) << "ÊıÁ¿"
+                                  << "\n";
+                    }
+                }
+
+                std::cout << "ÇëÊäÈëÒªÑ¡ÔñµÄÉÌÆ·¼°ÊıÁ¿£º";
                 std::cin >> name >> quantity;
 
-                // åˆ¤æ–­å•†å“æ˜¯å¦å­˜åœ¨
-                std::optional<pos_system::Product> product = inventory.selectProduct(inventory.getProductId(name));
+                // ÅĞ¶ÏÉÌÆ·ÊÇ·ñ´æÔÚ
+                product = inventory.selectProduct(inventory.getProductId(name));
                 if (!product) {
-                    std::cout << "å•†å“ä¸å­˜åœ¨ï¼\n" << std::endl;
+                    std::cout << "ÉÌÆ·²»´æÔÚ£¡\n" << std::endl;
 
                     break;
                 }
 
                 if (saleTransaction.saleProduct(product.value(), quantity)) {
-                    std::cout << "é€‰æ‹©æˆåŠŸï¼\n";
+                    std::cout << "Ñ¡Ôñ³É¹¦£¡\n";
                     choiceStatus++;
                 } else {
-                    std::cout << "é€‰æ‹©å¤±è´¥ï¼\n";
+                    std::cout << "Ñ¡ÔñÊ§°Ü£¡\n";
                 }
 
                 break;
@@ -51,23 +83,23 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
                 int pricePayable;
 
                 if (!choiceStatus) {
-                    std::cout << "è¯·å…ˆé€‰æ‹©å•†å“ï¼\n" << std::endl;
+                    std::cout << "ÇëÏÈÑ¡ÔñÉÌÆ·£¡\n" << std::endl;
 
                     break;
                 }
 
-                std::cout << "è¯·ä»˜æ¬¾ï¼š";
+                std::cout << "Çë¸¶¿î£º";
                 std::cin >> pricePayable;
 
                 if (saleTransaction.finalizeSale(inventory, pricePayable)) {
                     if (inventory.saveProduct(-1)) {
-                        std::cout << "æ”¶æ¬¾æˆåŠŸï¼\n" << std::endl;
+                        std::cout << "ÊÕ¿î³É¹¦£¡\n" << std::endl;
                         receiptStatus++;
                     } else {
-                        std::cout << "æ”¶æ¬¾å¤±è´¥ï¼\n" << std::endl;
+                        std::cout << "ÊÕ¿îÊ§°Ü£¡\n" << std::endl;
                     }
                 } else {
-                    std::cout << "æ”¶æ¬¾å¼‚å¸¸ï¼\n" << std::endl;
+                    std::cout << "ÊÕ¿îÒì³££¡\n" << std::endl;
                 }
 
                 break;
@@ -76,9 +108,9 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
         case 3:
             {
                 if (!receiptStatus) {
-                    std::cout << "è¯·å…ˆæ”¯ä»˜ï¼\n" << std::endl;
+                    std::cout << "ÇëÏÈÖ§¸¶£¡\n" << std::endl;
                 } else if (!saleTransaction.printReceipt()) {
-                    std::cout << "æ‰“å°å¤±è´¥ " << std::endl;
+                    std::cout << "´òÓ¡Ê§°Ü " << std::endl;
                 }
 
                 break;
@@ -88,12 +120,12 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
             {
                 choiceStatus = receiptStatus = 0;
                 saleTransaction.clearSale();
+
+                break;
             }
 
-            break;
-
         default:
-        std::cout << "è¾“å…¥é”™è¯¯ï¼Œè¯·é‡æ–°é€‰æ‹©ï¼š\n";
+            std::cout << "ÊäÈë´íÎó£¬ÇëÖØĞÂÑ¡Ôñ£º\n";
         }
     } while (menu++ != 0);
 }

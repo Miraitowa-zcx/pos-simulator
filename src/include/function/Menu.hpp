@@ -5,19 +5,15 @@
 #ifndef MENU_HPP
 #define MENU_HPP
 
-#include <cstdlib>
-#include <iostream>
-
-#include "../class/Inventory.hpp"
 #include "../class/SaleTransaction.hpp"
 
-// ä¸»èœå•
+// Ö÷²Ëµ¥
 void MainMenu(int& menu);
 
-// ç®¡ç†å‘˜èœå•
+// ¹ÜÀíÔ±²Ëµ¥
 void ManagerMenu(int& menu, pos_system::Inventory& inventory);
 
-// å”®è´§æœºèœå•
+// ÊÛ»õ»ú²Ëµ¥
 void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system::SaleTransaction& saleTransaction);
 
 #endif // MENU_HPP

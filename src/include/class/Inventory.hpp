@@ -7,11 +7,9 @@
 
 #include <filesystem>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <ranges>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 #include "Product.hpp"
@@ -27,12 +25,14 @@ namespace pos_system {
         int deleteProduct(int productId);
         std::optional<Product> selectProduct(int productId) const;
         int getProductId(const std::string& productName) const;
+        std::vector<int> getProductType(const std::string& productType);
         int getProductQuantity(int productId) const;
         int printInventory() const;
 
     private:
         std::unordered_map<int, std::pair<Product, int>> products;
         std::unordered_map<std::string, int> nameToIdMap;
+        std::unordered_map<std::string, int> typeToIdMap;
         int currentId;
     };
 } // namespace pos_system
