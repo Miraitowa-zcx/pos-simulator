@@ -47,11 +47,10 @@ namespace pos_system {
             if (const int realQuantity = it->second; quantity <= realQuantity) {
                 total -= quantity * product.value().getPrice();
                 items.erase(it);
-                if(realQuantity - realQuantity != 0) {
-items.emplace_back(product.value(), realQuantity - quantity);
-																						} 
-
-                return realQuantity - realQuantity;
+                if (realQuantity - quantity != 0) {
+                    items.emplace_back(product.value(), realQuantity - quantity);
+                }
+                return realQuantity - quantity;
             }
             return -1;
         }
