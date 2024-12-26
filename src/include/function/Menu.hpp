@@ -5,11 +5,11 @@
 #ifndef MENU_HPP
 #define MENU_HPP
 
-#include "../class/SaleTransaction"
 #include <cstdlib>
 #include <iostream>
 
 #include "../class/Inventory.hpp"
+#include "../class/SaleTransaction.hpp"
 
 // 主菜单
 void MainMenu(int& menu);

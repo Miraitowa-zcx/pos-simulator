@@ -6,6 +6,27 @@
 
 void ManagerMenu(int& menu, pos_system::Inventory& inventory) {
 
+    // 管理员账户及密码
+    const static std::string USERNAME = "admin";
+    const static std::string PASSWORD = "123456";
+
+    // 输入账户名及密码
+    std::string username;
+    std::string password;
+
+    std::cout << "请输入账户名：";
+    std::cin >> username;
+    std::cout << "请输入密码：";
+    std::cin >> password;
+
+    // 验证账户名和密码
+    if (username != USERNAME || password != PASSWORD) {
+        std::cout << "用户名或密码错误！\n" << std::endl;
+        return;
+    }
+
+    std::cout << "欢迎 " << username << " 登录！\n";
+
     do {
         std::cout << "**********************  管理菜单  **********************\n";
         std::cout << "1. 添加商品；\n";
@@ -107,9 +128,9 @@ void ManagerMenu(int& menu, pos_system::Inventory& inventory) {
                     if (!inventory.saveProduct(product->getId())) {
                         std::cout << "查询失败！\n";
                     } else {
-                        std::cout << "产品名称: " << product->getName() << "  " << std::endl;
-                        std::cout << "产品价格: " << product->getPrice() << "  " << std::endl;
-                        std::cout << "产品数量: " << inventory.getProductQuantity(product->getId()) << "  "
+                        std::cout << "商品名称: " << product->getName() << "  " << std::endl;
+                        std::cout << "商品价格: " << product->getPrice() << "元  " << std::endl;
+                        std::cout << "商品数量: " << inventory.getProductQuantity(product->getId()) << "  "
                                   << std::endl;
                         std::cout << "查询成功！\n";
                     }

@@ -216,6 +216,9 @@ namespace pos_system {
     int Inventory::printInventory() const {
         std::cout << "ID\t名称\t价格\t数量\n";
         for (const auto& [fst, snd] : products) {
+            if (snd.first.getName().empty()) {
+                continue; // 跳过名称为 "0" 的产品
+            }
             std::cout << fst << "\t" << snd.first.getName() << "\t" << std::fixed << std::setprecision(2)
                       << snd.first.getPrice() << "\t" << snd.second << "\n";
         }

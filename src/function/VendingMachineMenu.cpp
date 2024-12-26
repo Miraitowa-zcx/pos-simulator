@@ -6,6 +6,7 @@
 
 void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system::SaleTransaction& saleTransaction) {
 
+    // 状态变量
     int choiceStatus = 0, receiptStatus = 0;
 
     do {
@@ -27,8 +28,15 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
                 std::cout << "请输入要选择的商品及数量：";
                 std::cin >> name >> quantity;
 
-                if (saleTransaction.saleProduct(
-                        inventory.selectProduct(inventory.getProductId(name)).value(), quantity)) {
+                // 判断商品是否存在
+                std::optional<pos_system::Product> product = inventory.selectProduct(inventory.getProductId(name));
+                if (!product) {
+                    std::cout << "商品不存在！\n" << std::endl;
+
+                    break;
+                }
+
+                if (saleTransaction.saleProduct(product.value(), quantity)) {
                     std::cout << "选择成功！\n";
                     choiceStatus++;
                 } else {
@@ -42,20 +50,24 @@ void VendingMachineMenu(int& menu, pos_system::Inventory& inventory, pos_system:
             {
                 int pricePayable;
 
+                if (!choiceStatus) {
+                    std::cout << "请先选择商品！\n" << std::endl;
+
+                    break;
+                }
+
                 std::cout << "请付款：";
                 std::cin >> pricePayable;
 
-                if (!choiceStatus) {
-                    std::cout << "请先选择商品！\n" << std::endl;
-                } else if (saleTransaction.finalizeSale(inventory, pricePayable)) {
+                if (saleTransaction.finalizeSale(inventory, pricePayable)) {
                     if (inventory.saveProduct(-1)) {
-                        std::cout << "收款成功！\n";
+                        std::cout << "收款成功！\n" << std::endl;
                         receiptStatus++;
                     } else {
-                        std::cout << "收款失败！\n";
+                        std::cout << "收款失败！\n" << std::endl;
                     }
                 } else {
-                    std::cout << "收款异常！\n";
+                    std::cout << "收款异常！\n" << std::endl;
                 }
 
                 break;
